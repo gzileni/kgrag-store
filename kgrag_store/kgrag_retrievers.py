@@ -10,7 +10,6 @@ from .kgrag_graph import KGragGraph
 from .kgrag_cache import MemoryRedisCacheRetriever
 from .kgrag_utils import print_progress_bar
 from log import get_logger, get_metadata
-from kgrag_store.kgrag_config import settings
 
 PathType = Literal["fs", "s3"]
 FormatFile = Literal["pdf", "csv", "json"]
@@ -457,7 +456,7 @@ class KGragRetriever(KGragGraph):
         prefix = kwargs.get("prefix", None)
         limit = kwargs.get("limit", 0)
         start = kwargs.get("start", 0)
-        path_download = kwargs.get("path_download", settings.PATH_DOWNLOAD)
+        path_download = kwargs.get("path_download", None)
         refresh = kwargs.get("refresh", False)
 
         self.logger.info("Processing documents from S3.")

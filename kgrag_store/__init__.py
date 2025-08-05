@@ -6,6 +6,4 @@ from .kgrag_prompt import (
 from .kgrag_retrievers import (
     KGragRetriever
 )
-from ..test import kgrag
-from .kgrag_config import settings
 from .kgrag_state import State
