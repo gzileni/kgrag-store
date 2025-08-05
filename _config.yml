@@ -1,0 +1,19 @@
+theme: minima
+title: Kgrag Store
+email: gzileni@hotmail.com
+description: >-
+  A Python library for knowledge graph management and retrieval with advanced memory capabilities.
+version: 1.1.13
+
+github_username:  gzileni
+linkedin_username: gzileni
+
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag
+
+social:
+  - icon: fab fa-github
+    link: https://github.com/gzileni/kgrag-store
+  - icon: fab fa-linkedin
+    link: https://www.linkedin.com/in/gzileni

@@ -17,6 +17,9 @@
 | `path_download`         | `str`                      | Directory locale per scaricare i file da S3     |
 | `thread`                | `str`                      | Trace ID per il logging                         |
 
+###
+
+
 ### 1. Caricamento da filesystem locale
 
 Supponiamo di avere un PDF in `/tmp/test.pdf`:

@@ -8,5 +8,4 @@ from .kgrag_retrievers import (
 )
 from ..test import kgrag
 from .kgrag_config import settings
-from .kgrag_mcp_client import kgrag_mcp_client
 from .kgrag_state import State
