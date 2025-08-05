@@ -1,5 +1,13 @@
 # krag-store
 
+## 📦 Installation
+
+Install the `krag-store` library via pip:
+
+```bash
+pip install krag-store
+```
+
 ## 🔧 Environment Variables
 
 Example organization for multiple environments:
