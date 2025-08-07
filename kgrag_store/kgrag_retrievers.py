@@ -242,8 +242,6 @@ class KGragRetriever(KGragGraph):
         - path (str): The path to the document file.
         """
 
-        documents: list[Document] = []
-
         if path is None:
             # Log the error message and raise a ValueError
             # to indicate that the path is not set.
