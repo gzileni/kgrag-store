@@ -415,7 +415,7 @@ class KGragRetriever(KGragGraph):
             docs = self._get_documents_from_path(
                 path,
                 headers=metadata,
-                format_file=ext
+                format_file=self.format_file
             )
             if not docs:
                 self.logger.warning(
