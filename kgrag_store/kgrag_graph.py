@@ -35,7 +35,7 @@ class KGragGraph(KGragVectorStore):
     neo4j_username: str
     neo4j_password: str
     neo4j_database: str | None = None
-    neo4j_driver: Driver
+    neo4j_driver: Driver | None = None
     llm_type: TypeModel = "openai"
     llm_model: str = "gpt-4o-2024-08-06"
     llm_model_url: str | None = None
@@ -117,13 +117,13 @@ class KGragGraph(KGragVectorStore):
                 os.getenv("LLM_MODEL", "gpt-4o-2024-08-06")
             )
             self.llm_model_url = kwargs.get("llm_model_url", None)
+
         if not self.neo4j_url:
             msg: str = (
                 "Neo4j URL not provided. Please set the 'neo4j_url' parameter "
                 "or the 'NEO4J_URL' environment variable."
             )
-            logger.error(msg)
-            raise ValueError(msg)
+            logger.warning(msg)
 
         if not self.neo4j_username:
             msg: str = (
@@ -131,8 +131,7 @@ class KGragGraph(KGragVectorStore):
                 " Please set the 'neo4j_username' parameter "
                 "or the 'NEO4J_USERNAME' environment variable."
             )
-            logger.error(msg)
-            raise ValueError(msg)
+            logger.warning(msg)
 
         if not self.neo4j_password:
             msg: str = (
@@ -140,20 +139,21 @@ class KGragGraph(KGragVectorStore):
                 "Please set the 'neo4j_password' parameter "
                 "or the 'NEO4J_PASSWORD' environment variable."
             )
-            logger.error(msg)
-            raise ValueError(msg)
+            logger.warning(msg)
 
         # Initialize Neo4j driver
-        self.neo4j_driver = GraphDatabase.driver(
-            self.neo4j_url,
-            auth=(self.neo4j_username, self.neo4j_password)
-        )
-        if self.neo4j_database:
-            logger.debug(
-                f"Using Neo4j database: {self.neo4j_database}",
-                extra=get_metadata(thread_id=str(self.thread))
+        if all([self.neo4j_url, self.neo4j_username, self.neo4j_password]):
+            self.neo4j_driver = GraphDatabase.driver(
+                self.neo4j_url,
+                auth=(self.neo4j_username, self.neo4j_password)
             )
-            self.create_database_if_not_exists(self.neo4j_database)
+
+            if self.neo4j_database:
+                logger.debug(
+                    f"Using Neo4j database: {self.neo4j_database}",
+                    extra=get_metadata(thread_id=str(self.thread))
+                )
+                self.create_database_if_not_exists(self.neo4j_database)
 
         self.client_llm = self._get_model(llm_type=self.llm_type,
                                           llm_model=self.llm_model,
@@ -166,6 +166,12 @@ class KGragGraph(KGragVectorStore):
         Raises:
             ValueError: If the Neo4j driver is not initialized.
         """
+
+        if not self.neo4j_driver:
+            msg: str = "Neo4j driver is not initialized."
+            logger.error(msg, extra=get_metadata(thread_id=str(self.thread)))
+            raise ValueError(msg)
+
         with self.neo4j_driver.session() as session:
             session.run("MATCH ()-[r]-() DELETE r")
 
@@ -179,6 +185,11 @@ class KGragGraph(KGragVectorStore):
         Raises:
             ValueError: If the Neo4j driver is not initialized.
         """
+        if not self.neo4j_driver:
+            msg: str = "Neo4j driver is not initialized."
+            logger.error(msg, extra=get_metadata(thread_id=str(self.thread)))
+            raise ValueError(msg)
+
         with self.neo4j_driver.session(database="system") as session:
             # Controlla se il database esiste già
             result = session.run("SHOW DATABASES")
@@ -443,6 +454,14 @@ class KGragGraph(KGragVectorStore):
                 or relationships are empty.
         """
         try:
+            if not self.neo4j_driver:
+                msg: str = "Neo4j driver is not initialized."
+                logger.error(
+                    msg,
+                    extra=get_metadata(thread_id=str(self.thread))
+                )
+                raise ValueError(msg)
+
             with self.neo4j_driver.session() as session:
                 # Create nodes in Neo4j
                 for name, node_id in nodes.items():
@@ -489,6 +508,11 @@ class KGragGraph(KGragVectorStore):
             ValueError: If the Neo4j client is not initialized
                 or if entity_ids is empty.
         """
+
+        if not self.neo4j_driver:
+            msg: str = "Neo4j driver is not initialized."
+            logger.error(msg, extra=get_metadata(thread_id=str(self.thread)))
+            raise ValueError(msg)
 
         query = """
         MATCH (e:Entity)-[r1]-(n1)-[r2]-(n2)
@@ -876,6 +900,14 @@ class KGragGraph(KGragVectorStore):
         try:
             if not query:
                 raise ValueError("Query must not be empty")
+
+            if not self.neo4j_driver:
+                msg: str = "Neo4j driver is not initialized."
+                logger.error(
+                    msg,
+                    extra=get_metadata(thread_id=str(self.thread))
+                )
+                raise ValueError(msg)
 
             retriever_result = self.retriever_search(
                 query=query,

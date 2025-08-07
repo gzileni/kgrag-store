@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kgrag-store"
-version = "1.0.64"
+version = "1.0.65"
 description = "A Python library for knowledge graph management and retrieval with advanced memory capabilities."
 authors = [
     { name="Giuseppe Zileni", email="giuseppe.zileni@gmail.com" }
