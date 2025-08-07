@@ -349,6 +349,8 @@ class KGragRetriever(KGragGraph):
         - documents (list[Document]): List of Document objects to process.
         - path (str): The local path where files are located.
             If documents are provided, this is ignored.
+        - force (bool): Whether to force the processing of files even
+            if they already exist in the path.
         - bucket_name (str): The name of the S3 bucket.
             If documents are provided, this is ignored.
         - aws_region (str): The AWS region
@@ -356,7 +358,8 @@ class KGragRetriever(KGragGraph):
         """
 
         documents: list[Document] = kwargs.get("documents", [])
-        extra = get_metadata(thread_id=str(self.thread))
+        extra: dict = get_metadata(thread_id=str(self.thread))
+        force: bool = kwargs.get("force", False)
 
         if len(documents) == 0:
             path = kwargs.get("path", None)
@@ -369,7 +372,7 @@ class KGragRetriever(KGragGraph):
                                   extra=extra)
                 raise ValueError(msg)
 
-            if os.path.exists(path):
+            if os.path.exists(path) and not force:
                 msg: str = (
                     f"Path '{path}' exist. "
                     "Ingestion not required."
