@@ -17,7 +17,7 @@ from langchain_core.documents import Document
 from .kgrag_ollama import ollama_pull
 from log import logger, get_metadata
 from .kgrag_components import GraphComponents
-from .kgrag_prompt import AGENT_PROMPT, create_prompt_parser
+from .kgrag_prompt import AGENT_PROMPT, parser_prompt
 from .kgrag_vector import KGragVectorStore
 
 TypeModel = Literal["openai", "ollama", "vllm"]
@@ -308,7 +308,7 @@ class KGragGraph(KGragVectorStore):
             ValueError: If the OpenAI response content is None.
         """
         try:
-            prompt_parser: str = create_prompt_parser(prompt_user)
+            prompt_parser: str = parser_prompt(prompt_user)
 
             prompt = ChatPromptTemplate.from_messages([
                 (

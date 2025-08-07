@@ -29,7 +29,25 @@ AGENT_PROMPT: str = (
 )
 
 
-def create_prompt_parser(prompt: Optional[str] = None) -> str:
+def query_prompt(nodes_str: str, edges_str: str, user_query: str) -> str:
+    """
+    Generate a prompt for the agent to answer a user query
+    using the knowledge graph.
+    Args:
+        nodes_str (str): String representation of nodes in the graph.
+        edges_str (str): String representation of edges in the graph.
+        user_query (str): The user's query to be answered.
+    Returns:
+        str: The formatted prompt for the agent.
+    """
+    return AGENT_PROMPT.format(
+        nodes_str=nodes_str,
+        edges_str=edges_str,
+        user_query=user_query
+    )
+
+
+def parser_prompt(prompt: Optional[str] = None) -> str:
     """
     Create a prompt for the LLM parser.
     This prompt is used to instruct the LLM on how to parse
