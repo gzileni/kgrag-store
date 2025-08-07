@@ -233,7 +233,8 @@ class KGragRetriever(KGragGraph):
     def _get_documents_from_path(
         self,
         path: str,
-        **kwargs
+        format_file: FormatFile = "pdf",
+        **kwargs_loaders: Any
     ) -> list[Document]:
         """
         Loads documents from a specified path based on the file format.
@@ -242,7 +243,6 @@ class KGragRetriever(KGragGraph):
         """
 
         documents: list[Document] = []
-        format_file = kwargs.get("format_file", self.format_file)
 
         if path is None:
             # Log the error message and raise a ValueError
@@ -260,15 +260,13 @@ class KGragRetriever(KGragGraph):
                               ))
             raise ValueError(msg)
 
+        loader: Any = None
         if format_file == "pdf":
-            loader = PyPDFLoader(path, **kwargs)
-            documents = loader.load()
+            loader = PyPDFLoader(path, **kwargs_loaders)
         elif format_file == "csv":
-            loader = CSVLoader(path, **kwargs)
-            documents = loader.load()
+            loader = CSVLoader(path, **kwargs_loaders)
         elif format_file == "json":
-            loader = JSONLoader(path, jq_schema='.', **kwargs)
-            documents = loader.load()
+            loader = JSONLoader(path, jq_schema='.', **kwargs_loaders)
         else:
             msg: str = (
                 "Unsupported format"
@@ -288,7 +286,18 @@ class KGragRetriever(KGragGraph):
             )
             raise ValueError(msg)
 
-        return documents
+        if loader is None:
+            msg: str = (
+                "Loader is not set. "
+                "Please provide a valid loader for the specified format."
+            )
+            self.logger.error(
+                msg,
+                extra=get_metadata(thread_id=str(self.thread))
+            )
+            raise ValueError(msg)
+
+        return loader.load()
 
     async def _filter_files(
         self,
