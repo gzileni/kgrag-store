@@ -12,7 +12,7 @@ class single(BaseModel):
         relationship (str): The type of relationship to the target node(s).
     """
     node: str
-    target_node: str | List[str]
+    target_node: str | list[str] | List[str]
     relationship: str
 
 
