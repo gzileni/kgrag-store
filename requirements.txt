@@ -120,7 +120,7 @@ plotly==6.2.0
 pluggy==1.6.0
 portalocker==3.2.0
 propcache==0.3.2
-protobuf==6.31.1
+protobuf==5.29.5
 psutil==7.0.0
 py_rust_stemmers==0.1.5
 pyaws-s3==1.0.28
