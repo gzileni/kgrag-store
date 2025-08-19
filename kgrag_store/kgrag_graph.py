@@ -13,6 +13,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain_ollama import ChatOllama
 from langchain_core.documents import Document
+from pydantic import SecretStr
 
 from .kgrag_ollama import ollama_pull
 from log import logger, get_metadata
@@ -41,6 +42,7 @@ class KGragGraph(KGragVectorStore):
     llm_model_url: str | None = None
     temperature: float = 0.0
     client_llm: ChatOpenAI | ChatOllama
+    api_key: SecretStr | None = None
 
     def __init__(self, **kwargs):
         """
@@ -117,6 +119,13 @@ class KGragGraph(KGragVectorStore):
                 os.getenv("LLM_MODEL", "gpt-4o-2024-08-06")
             )
             self.llm_model_url = kwargs.get("llm_model_url", None)
+            self.api_key = kwargs.get("api_key", os.getenv("OPENAI_API_KEY"))
+            if self.api_key is None:
+                logger.warning(
+                    "API key not set, using default OpenAI API key",
+                    extra=get_metadata(thread_id=str(self.thread))
+                )
+                raise ValueError("api_key must be set")
 
         if not self.neo4j_url:
             msg: str = (
@@ -272,7 +281,8 @@ class KGragGraph(KGragVectorStore):
                                 thread_id=str(self.thread)
                             ))
                 return ChatOpenAI(model=llm_model,
-                                  temperature=self.temperature)
+                                  temperature=self.temperature,
+                                  api_key=self.api_key)
             elif llm_type == 'ollama':
                 logger.info(
                     "Using Ollama LLM",
