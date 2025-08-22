@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kgrag-store"
-version = "1.0.70"
+version = "1.0.71"
 description = "A Python library for knowledge graph management and retrieval with advanced memory capabilities."
 authors = [
     { name="Giuseppe Zileni", email="giuseppe.zileni@gmail.com" }
@@ -25,7 +25,6 @@ dependencies = [
     "annotated-types>=0.7.0",
     "anthropic>=0.60.0",
     "anyio>=4.9.0",
-    "arxiv-export-documents>=0.1.8",
     "arxivpy>=0.0.2",
     "attrs>=25.3.0",
     "backoff>=2.2.1",
